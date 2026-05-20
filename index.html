@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuevo Flujo de Afiliación — Origon</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f13;
+    --surface: #16181f;
+    --surface2: #1e2029;
+    --border: #2a2d38;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --danger: #ff6b6b;
+    --warn: #ffb347;
+    --text: #e8e9ef;
+    --muted: #7b7e8f;
+    --tag-old: rgba(255,107,107,0.12);
+    --tag-old-border: rgba(255,107,107,0.35);
+    --tag-new: rgba(0,212,170,0.12);
+    --tag-new-border: rgba(0,212,170,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.3);
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    gap: 2px;
+    padding: 0 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  nav button:hover { color: var(--text); }
+
+  nav button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  nav button .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 36px;
+  }
+  .page-header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .page-header p {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  /* BEFORE / AFTER LAYOUT */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  .compare-panel {
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid;
+  }
+
+  .compare-panel.before {
+    background: var(--tag-old);
+    border-color: var(--tag-old-border);
+  }
+
+  .compare-panel.after {
+    background: var(--tag-new);
+    border-color: var(--tag-new-border);
+  }
+
+  .compare-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .compare-panel.before .compare-label { color: var(--danger); }
+  .compare-panel.after .compare-label { color: var(--accent2); }
+
+  /* IMAGE PLACEHOLDER */
+  .img-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    border: 1.5px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    background: var(--surface2);
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .img-placeholder:hover { border-color: var(--accent); }
+
+  .img-placeholder .icon {
+    font-size: 28px;
+    opacity: 0.4;
+  }
+
+  .img-placeholder img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* OPPORTUNITY TAGS */
+  .opp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .opp-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .opp-item.remove {
+    background: rgba(255,107,107,0.08);
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+
+  .opp-item.add {
+    background: rgba(0,212,170,0.08);
+    border: 1px solid rgba(0,212,170,0.2);
+  }
+
+  .opp-item.change {
+    background: rgba(255,179,71,0.08);
+    border: 1px solid rgba(255,179,71,0.2);
+  }
+
+  .opp-tag {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  .opp-item.remove .opp-tag { background: rgba(255,107,107,0.2); color: var(--danger); }
+  .opp-item.add .opp-tag { background: rgba(0,212,170,0.2); color: var(--accent2); }
+  .opp-item.change .opp-tag { background: rgba(255,179,71,0.2); color: var(--warn); }
+
+  /* MOCKUP EMAIL */
+  .email-mockup {
+    background: #fff;
+    color: #1a1a2e;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .email-header {
+    background: #1a1a2e;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .email-logo {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .email-logo span { color: var(--accent); }
+
+  .email-body {
+    padding: 32px 28px;
+  }
+
+  .email-greeting {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #1a1a2e;
+  }
+
+  .email-text {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .email-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    margin-bottom: 28px;
+  }
+
+  .email-footer {
+    border-top: 1px solid #eee;
+    padding: 20px 28px;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .email-signature {
+    margin-top: 8px;
+    font-weight: 600;
+    color: #1a1a2e;
+    font-size: 13px;
+  }
+
+  .email-signature span { color: var(--accent); }
+
+  /* STEP BAR */
+  .step-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .step-circle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .step-circle.done { background: var(--accent); color: #fff; }
+  .step-circle.current { background: var(--accent2); color: #0e0f13; }
+  .step-circle.pending { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    margin: 0 8px;
+    min-width: 20px;
+  }
+
+  .step-label { color: var(--text); }
+  .step-label.pending-label { color: var(--muted); }
+
+  /* COMPLETION MODAL */
+  .modal-mockup {
+    background: #fff;
+    color: #1a1a2e;
+    border-radius: 12px;
+    padding: 32px 28px;
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .modal-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1a1a2e;
+  }
+
+  .modal-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .modal-btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .modal-btn-secondary {
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* TABLA COMPARATIVA */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .comp-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(42,45,56,0.5);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .comp-table tr:last-child td { border-bottom: none; }
+
+  .comp-table td:first-child {
+    font-weight: 500;
+    color: var(--muted);
+    width: 120px;
+    white-space: nowrap;
+  }
+
+  .comp-table td.old { color: var(--danger); }
+  .comp-table td.new { color: var(--accent2); }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .pill.remove { background: rgba(255,107,107,0.15); color: var(--danger); }
+  .pill.add { background: rgba(0,212,170,0.15); color: var(--accent2); }
+  .pill.change { background: rgba(255,179,71,0.15); color: var(--warn); }
+
+  /* INICIO */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+
+  .intro-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .intro-card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .intro-card-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .intro-card-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .changes-count {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(108,99,255,0.15);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* TYC WIDGET */
+  .tyc-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tyc-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .tyc-step.eliminated {
+    background: rgba(255,107,107,0.07);
+    border: 1px solid rgba(255,107,107,0.2);
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .tyc-step.kept {
+    background: rgba(0,212,170,0.07);
+    border: 1px solid rgba(0,212,170,0.2);
+  }
+
+  .tyc-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .tyc-step.eliminated .tyc-num { background: rgba(255,107,107,0.2); color: var(--danger); }
+  .tyc-step.kept .tyc-num { background: rgba(0,212,170,0.2); color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">origon<span>.</span></div>
+  <div class="badge">FLUJO AFILIACIÓN v4 — PROPUESTO</div>
+</div>
+
+<nav>
+  <button class="active" onclick="show('inicio', this)">Inicio</button>
+  <button onclick="show('correo', this)"><span class="dot"></span> Correo</button>
+  <button onclick="show('paso1', this)"><span class="dot"></span> Paso 1 — Contraseña</button>
+  <button onclick="show('paso2', this)"><span class="dot"></span> Paso 2 — Datos fiscales</button>
+  <button onclick="show('paso3', this)"><span class="dot"></span> Paso 3 — TyC</button>
+  <button onclick="show('comparativa', this)">Comparativa</button>
+</nav>
+
+<main>
+
+  <!-- INICIO -->
+  <div class="section active" id="inicio">
+    <div class="page-header">
+      <h1>Nuevo flujo de afiliación</h1>
+      <p>Resumen de mejoras propuestas al proceso de onboarding de proveedores en DITO by Origon</p>
+    </div>
+    <div class="intro-grid">
+      <div class="intro-card" onclick="show('correo', document.querySelectorAll('nav button')[1])">
+        <div class="intro-card-num">01</div>
+        <div class="intro-card-title">Correo de bienvenida</div>
+        <div class="intro-card-desc">Actualización de remitente, mensaje, botón y firma del ecosistema.</div>
+        <div class="changes-count">5 cambios</div>
+      </div>
+      <div class="intro-card" onclick="show('paso1', document.querySelectorAll('nav button')[2])">
+        <div class="intro-card-num">02</div>
+        <div class="intro-card-title">Paso 1 — Seteo de contraseña</div>
+        <div class="intro-card-desc">Mensaje de bienvenida, barra de progreso y limpieza de columnas.</div>
+        <div class="changes-count">4 cambios</div>
+      </div>
+      <div class="intro-card" onclick="show('paso2', document.querySelectorAll('nav button')[3])">
+        <div class="intro-card-num">03</div>
+        <div class="intro-card-title">Paso 2 — Datos fiscales</div>
+        <div class="intro-card-desc">Carga automática de CSF y eliminación de sección rep. legal.</div>
+        <div class="changes-count">2 cambios</div>
+      </div>
+      <div class="intro-card" onclick="show('paso3', document.querySelectorAll('nav button')[4])">
+        <div class="intro-card-num">04</div>
+        <div class="intro-card-title">Paso 3 — Aceptar TyC</div>
+        <div class="intro-card-desc">Reducción de 5 clics a 2 para aceptar términos y condiciones.</div>
+        <div class="changes-count">3 clics eliminados</div>
+      </div>
+      <div class="intro-card" onclick="show('comparativa', document.querySelectorAll('nav button')[5])">
+        <div class="intro-card-num">↗</div>
+        <div class="intro-card-title">Comparativa general</div>
+        <div class="intro-card-desc">Tabla antes/después con todos los cambios del flujo.</div>
+        <div class="changes-count">Vista consolidada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORREO -->
+  <div class="section" id="correo">
+    <div class="page-header">
+      <h1>Correo de bienvenida</h1>
+      <p>Actualización del correo de afiliación enviado al proveedor al iniciar el proceso</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-panel before">
+        <div class="compare-label">⚠ Actual</div>
+        <div class="img-placeholder" onclick="uploadImg(this)">
+          <div class="icon">🖼</div>
+          <span>Clic para agregar captura actual</span>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Remitente genérico sin dominio oficial</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Sin encabezado de bienvenida</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Botón de afiliación sin estilo</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Firma sin identidad de ecosistema</div>
+        </div>
+      </div>
+
+      <div class="compare-panel after">
+        <div class="compare-label">✓ Propuesto</div>
+        <div style="background:#fff; border-radius:8px; overflow:hidden; margin-bottom:16px;">
+          <div class="email-mockup">
+            <div class="email-header">
+              <div class="email-logo">origon<span>.</span></div>
+              <div style="font-size:11px; color:#888;">afiliacion@egresos.origon.io</div>
+            </div>
+            <div class="email-body">
+              <div class="email-greeting">¡Bienvenido al ecosistema Origon!</div>
+              <div class="email-text">Has sido invitado a afiliarte como proveedor. A continuación podrás completar tu registro de manera rápida y sencilla.</div>
+              <a class="email-btn" href="#">Iniciar afiliación →</a>
+              <div class="email-footer">
+                Este correo fue enviado desde <strong>afiliacion@egresos.origon.io</strong>
+                <div class="email-signature">Equipo <span>DITO by Origon</span> — <span style="color:#888; font-weight:400;">[Tagline pendiente]</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Remitente: afiliacion@egresos.origon.io</div>
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Mensaje de encabezado cálido</div>
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Botón "Iniciar afiliación" con estilo</div>
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Firma: DITO by Origon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 1 -->
+  <div class="section" id="paso1">
+    <div class="page-header">
+      <h1>Paso 1 — Seteo de contraseña</h1>
+      <p>Primera pantalla que ve el proveedor al hacer clic en el correo de invitación</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-panel before">
+        <div class="compare-label">⚠ Actual</div>
+        <div class="img-placeholder" onclick="uploadImg(this)">
+          <div class="icon">🖼</div>
+          <span>Clic para agregar captura — hoja 4</span>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item remove"><span class="opp-tag">Falta</span> Sin mensaje de bienvenida al onboarding</div>
+          <div class="opp-item remove"><span class="opp-tag">Falta</span> Sin barra de progreso de pasos</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Columna "Fecha de inicio de campaña"</div>
+          <div class="opp-item remove"><span class="opp-tag">Proponer</span> Buscador de campañas (evaluar)</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Paso 6 — inicio de sesión en CDP</div>
+        </div>
+      </div>
+
+      <div class="compare-panel after">
+        <div class="compare-label">✓ Propuesto</div>
+        <div style="background:#fff; color:#1a1a2e; border-radius:8px; padding:20px; margin-bottom:16px;">
+          <div style="font-size:13px; color:#555; margin-bottom:16px; line-height:1.6;">
+            ¡Hola! Estás a punto de completar tu afiliación como proveedor en <strong>DITO by Origon</strong>. Este proceso solo toma unos minutos.
+          </div>
+          <div class="step-bar">
+            <div class="step-item">
+              <div class="step-circle current">1</div>
+              <div class="step-label" style="font-size:11px; color:#1a1a2e;">Inicio</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item">
+              <div class="step-circle pending">2</div>
+              <div class="step-label pending-label" style="font-size:11px;">Info básica</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item">
+              <div class="step-circle pending">3</div>
+              <div class="step-label pending-label" style="font-size:11px;">Aceptar TyC</div>
+            </div>
+          </div>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Mensaje de bienvenida al onboarding</div>
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Barra de progreso: Inicio → Info básica → TyC</div>
+          <div class="opp-item change"><span class="opp-tag">Cambio</span> Columna: "Empresa que se afilia a Tu empresa"</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Fecha de inicio de campaña</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Inicio de sesión en CDP (paso 6)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="section" id="paso2">
+    <div class="page-header">
+      <h1>Paso 2 — Datos fiscales</h1>
+      <p>Carga de información fiscal del proveedor — hoja 7 del manual</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-panel before">
+        <div class="compare-label">⚠ Actual</div>
+        <div class="img-placeholder" onclick="uploadImg(this)">
+          <div class="icon">🖼</div>
+          <span>Clic para agregar captura — hoja 7</span>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item remove"><span class="opp-tag">Falta</span> Sin carga automática de CSF</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Sección de representante legal incluida</div>
+        </div>
+      </div>
+
+      <div class="compare-panel after">
+        <div class="compare-label">✓ Propuesto</div>
+        <div style="background:#fff; color:#1a1a2e; border-radius:8px; padding:20px; margin-bottom:16px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px; color:#1a1a2e;">Información fiscal</div>
+          <div style="border: 1.5px dashed #6c63ff; border-radius:8px; padding:16px; text-align:center; background: rgba(108,99,255,0.05); margin-bottom:14px;">
+            <div style="font-size:13px; color:#6c63ff; font-weight:500; margin-bottom:4px;">📄 Cargar Constancia de Situación Fiscal (CSF)</div>
+            <div style="font-size:11px; color:#888;">El sistema llenará los campos automáticamente</div>
+          </div>
+          <div style="font-size:12px; color:#aaa; font-style:italic;">Sección "Representante legal" eliminada — no requerida en afiliación con TyC</div>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item add"><span class="opp-tag">Nuevo</span> Botón de carga de CSF con llenado automático</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Sección de representante legal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="section" id="paso3">
+    <div class="page-header">
+      <h1>Paso 3 — Aceptar términos y condiciones</h1>
+      <p>Reducción del proceso de aceptación de TyC de 5 clics a 2</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-panel before">
+        <div class="compare-label">⚠ Actual — 5 clics</div>
+        <div class="img-placeholder" onclick="uploadImg(this)">
+          <div class="icon">🖼</div>
+          <span>Clic para agregar captura actual</span>
+        </div>
+        <div class="tyc-steps">
+          <div class="tyc-step kept"><span class="tyc-num">1</span> Marcar como leído</div>
+          <div class="tyc-step kept"><span class="tyc-num">2</span> Aceptar</div>
+          <div class="tyc-step eliminated"><span class="tyc-num">3</span> (Widget) "Al aceptar confirmo que he leído..."</div>
+          <div class="tyc-step eliminated"><span class="tyc-num">4</span> (Widget) Aceptar de nuevo</div>
+          <div class="tyc-step eliminated"><span class="tyc-num">5</span> (Widget) Confirmación de aceptación</div>
+        </div>
+      </div>
+
+      <div class="compare-panel after">
+        <div class="compare-label">✓ Propuesto — 2 clics</div>
+        <div style="background:#fff; color:#1a1a2e; border-radius:8px; padding:20px; margin-bottom:16px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Términos y condiciones</div>
+          <div style="border:1px solid #eee; border-radius:6px; padding:12px; font-size:12px; color:#555; height:80px; overflow:hidden; margin-bottom:12px; position:relative;">
+            Lorem ipsum términos y condiciones del servicio DITO by Origon...
+            <div style="position:absolute; bottom:0; left:0; right:0; height:30px; background: linear-gradient(transparent, #fff);"></div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button style="flex:1; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:13px; cursor:pointer; background:#f9f9f9;">✓ Marcar como leído</button>
+            <button style="flex:1; padding:10px; border:none; border-radius:6px; font-size:13px; cursor:pointer; background:#6c63ff; color:#fff; font-weight:600;">Aceptar</button>
+          </div>
+        </div>
+        <div class="opp-list">
+          <div class="opp-item add"><span class="opp-tag">Conservar</span> Clic 1: Marcar como leído</div>
+          <div class="opp-item add"><span class="opp-tag">Conservar</span> Clic 2: Aceptar</div>
+          <div class="opp-item remove"><span class="opp-tag">Eliminar</span> Widget de confirmación (3 clics adicionales)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-title">Mensaje de finalización</div>
+      <div class="compare-grid">
+        <div class="compare-panel before">
+          <div class="compare-label">⚠ Actual</div>
+          <div style="background:#f5f5f5; border-radius:8px; padding:20px; text-align:center;">
+            <div style="color:#6c63ff; font-weight:700; font-size:16px; margin-bottom:8px;">egresos™</div>
+            <div style="font-size:12px; color:#333; margin-bottom:16px; line-height:1.6;">Se identificó que su afiliación ya se completó, por lo que usted puede ingresar a su portal DITO y operar con sus compradores con quienes colaborar.</div>
+            <div style="display:flex; gap:8px; justify-content:center;">
+              <button style="padding:8px 16px; border:1px solid #ccc; border-radius:6px; font-size:12px; background:#fff; cursor:pointer;">Cancelar</button>
+              <button style="padding:8px 16px; border:none; border-radius:6px; font-size:12px; background:#2196F3; color:#fff; cursor:pointer;">Ir a DITO ya</button>
+            </div>
+          </div>
+        </div>
+        <div class="compare-panel after">
+          <div class="compare-label">✓ Propuesto</div>
+          <div class="modal-mockup">
+            <div class="modal-logo">DITO by Origon</div>
+            <div class="modal-title">¡Listo! Tu afiliación está completa 🎉</div>
+            <div class="modal-text">Gracias por completar tu proceso de afiliación. Ya estás listo para comenzar a entregar tus documentos y operar en <strong>DITO by Origon</strong>.</div>
+            <div class="modal-actions">
+              <button class="modal-btn-primary">Ir al portal →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARATIVA -->
+  <div class="section" id="comparativa">
+    <div class="page-header">
+      <h1>Comparativa general</h1>
+      <p>Todos los cambios propuestos al flujo de afiliación en un solo lugar</p>
+    </div>
+
+    <div class="card">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Sección</th>
+            <th>Elemento</th>
+            <th>Actual</th>
+            <th>Propuesto</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Correo</td>
+            <td>Remitente</td>
+            <td class="old">Dominio genérico</td>
+            <td class="new">afiliacion@egresos.origon.io</td>
+            <td><span class="pill change">Cambio</span></td>
+          </tr>
+          <tr>
+            <td>Correo</td>
+            <td>Encabezado</td>
+            <td class="old">Sin mensaje de bienvenida</td>
+            <td class="new">Mensaje cálido de bienvenida</td>
+            <td><span class="pill add">Nuevo</span></td>
+          </tr>
+          <tr>
+            <td>Correo</td>
+            <td>Botón CTA</td>
+            <td class="old">Sin estilo definido</td>
+            <td class="new">"Iniciar afiliación" con estilo</td>
+            <td><span class="pill change">Cambio</span></td>
+          </tr>
+          <tr>
+            <td>Correo</td>
+            <td>Firma</td>
+            <td class="old">Sin identidad de marca</td>
+            <td class="new">Firma Ecosistema Origon <span style="color:var(--muted); font-size:11px;">(pendiente tagline)</span></td>
+            <td><span class="pill add">Nuevo</span></td>
+          </tr>
+          <tr>
+            <td>Paso 1</td>
+            <td>Mensaje inicial</td>
+            <td class="old">Sin contexto para el proveedor</td>
+            <td class="new">Mensaje de bienvenida al onboarding</td>
+            <td><span class="pill add">Nuevo</span></td>
+          </tr>
+          <tr>
+            <td>Paso 1</td>
+            <td>Barra de progreso</td>
+            <td class="old">No existe</td>
+            <td class="new">Inicio → Info básica → Aceptar TyC</td>
+            <td><span class="pill add">Nuevo</span></td>
+          </tr>
+          <tr>
+            <td>Paso 1</td>
+            <td>Columnas tabla</td>
+            <td class="old">"Fecha inicio campaña" visible</td>
+            <td class="new">Columna eliminada</td>
+            <td><span class="pill remove">Eliminar</span></td>
+          </tr>
+          <tr>
+            <td>Paso 1</td>
+            <td>Buscador campañas</td>
+            <td class="old">Presente</td>
+            <td class="new">Propuesto eliminar (por evaluar)</td>
+            <td><span class="pill remove">Proponer</span></td>
+          </tr>
+          <tr>
+            <td>Paso 1</td>
+            <td>Paso 6 login CDP</td>
+            <td class="old">Genera confusión de portal</td>
+            <td class="new">Eliminado del flujo</td>
+            <td><span class="pill remove">Eliminar</span></td>
+          </tr>
+          <tr>
+            <td>Paso 2</td>
+            <td>Carga CSF</td>
+            <td class="old">Llenado manual de datos</td>
+            <td class="new">Botón de carga con llenado automático</td>
+            <td><span class="pill add">Nuevo</span></td>
+          </tr>
+          <tr>
+            <td>Paso 2</td>
+            <td>Rep. Legal</td>
+            <td class="old">Sección incluida</td>
+            <td class="new">Eliminada — no requerida con TyC</td>
+            <td><span class="pill remove">Eliminar</span></td>
+          </tr>
+          <tr>
+            <td>Paso 3</td>
+            <td>Aceptar TyC</td>
+            <td class="old">5 clics (3 en widget)</td>
+            <td class="new">2 clics: marcar leído + aceptar</td>
+            <td><span class="pill change">Cambio</span></td>
+          </tr>
+          <tr>
+            <td>Paso 3</td>
+            <td>Mensaje final</td>
+            <td class="old">Técnico y genérico</td>
+            <td class="new">Cálido: "¡Listo! Ya puedes operar en DITO by Origon"</td>
+            <td><span class="pill change">Cambio</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Resumen de impacto</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:12px;">
+        <div style="background:rgba(0,212,170,0.08); border:1px solid rgba(0,212,170,0.2); border-radius:8px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:700; color:var(--accent2);">6</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">Elementos nuevos</div>
+        </div>
+        <div style="background:rgba(255,107,107,0.08); border:1px solid rgba(255,107,107,0.2); border-radius:8px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:700; color:var(--danger);">5</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">Eliminaciones</div>
+        </div>
+        <div style="background:rgba(255,179,71,0.08); border:1px solid rgba(255,179,71,0.2); border-radius:8px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:700; color:var(--warn);">4</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">Cambios</div>
+        </div>
+        <div style="background:rgba(108,99,255,0.08); border:1px solid rgba(108,99,255,0.2); border-radius:8px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:700; color:var(--accent);">−3</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">Clics en TyC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function uploadImg(placeholder) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      placeholder.innerHTML = `<img src="${ev.target.result}" alt="captura">`;
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+</script>
+</body>
+</html>
